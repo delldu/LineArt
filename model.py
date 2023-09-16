@@ -1,11 +1,8 @@
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
-import functools
 from torchvision import models
-from torch.autograd import Variable
-import numpy as np
-import math
+import pdb
 
 norm_layer = nn.InstanceNorm2d
 
@@ -29,14 +26,14 @@ class ResidualBlock(nn.Module):
 
 
 class Generator(nn.Module):
-    def __init__(self, input_nc, output_nc, n_residual_blocks=9, sigmoid=True):
+    def __init__(self, input_nc=3, output_nc=1, n_residual_blocks=3, sigmoid=True):
         super(Generator, self).__init__()
 
         # Initial convolution block
-        model0 = [   nn.ReflectionPad2d(3),
-                    nn.Conv2d(input_nc, 64, 7),
-                    norm_layer(64),
-                    nn.ReLU(inplace=True) ]
+        model0 = [nn.ReflectionPad2d(3),
+                  nn.Conv2d(input_nc, 64, 7),
+                  norm_layer(64),
+                  nn.ReLU(inplace=True) ]
         self.model0 = nn.Sequential(*model0)
 
         # Downsampling
@@ -44,9 +41,9 @@ class Generator(nn.Module):
         in_features = 64
         out_features = in_features*2
         for _ in range(2):
-            model1 += [  nn.Conv2d(in_features, out_features, 3, stride=2, padding=1),
-                        norm_layer(out_features),
-                        nn.ReLU(inplace=True) ]
+            model1 += [nn.Conv2d(in_features, out_features, 3, stride=2, padding=1),
+                       norm_layer(out_features),
+                       nn.ReLU(inplace=True) ]
             in_features = out_features
             out_features = in_features*2
         self.model1 = nn.Sequential(*model1)
@@ -61,20 +58,22 @@ class Generator(nn.Module):
         model3 = []
         out_features = in_features//2
         for _ in range(2):
-            model3 += [  nn.ConvTranspose2d(in_features, out_features, 3, stride=2, padding=1, output_padding=1),
-                        norm_layer(out_features),
-                        nn.ReLU(inplace=True) ]
+            model3 += [nn.ConvTranspose2d(in_features, out_features, 3, stride=2, padding=1, output_padding=1),
+                       norm_layer(out_features),
+                       nn.ReLU(inplace=True) ]
             in_features = out_features
             out_features = in_features//2
         self.model3 = nn.Sequential(*model3)
 
         # Output layer
-        model4 = [  nn.ReflectionPad2d(3),
-                        nn.Conv2d(64, output_nc, 7)]
+        model4 = [nn.ReflectionPad2d(3),
+                  nn.Conv2d(64, output_nc, 7)]
+
         if sigmoid:
             model4 += [nn.Sigmoid()]
 
         self.model4 = nn.Sequential(*model4)
+
 
     def forward(self, x, cond=None):
         out = self.model0(x)
@@ -127,6 +126,7 @@ class ResnetBlock(nn.Module):
         out = x + self.conv_block(x)
         return out
 
+# xxxx3333
 class GlobalGenerator2(nn.Module):
     def __init__(self, input_nc, output_nc, ngf=64, n_downsampling=3, n_blocks=9, norm_layer=nn.BatchNorm2d, 
                  padding_type='reflect', use_sig=False, n_UPsampling=0):
@@ -170,7 +170,7 @@ class GlobalGenerator2(nn.Module):
     def forward(self, input, cond=None):
         return self.model(input)
 
-
+# xxxx3333
 class InceptionV3(nn.Module): #avg pool
     def __init__(self, num_classes, isTrain, use_aux=True, pretrain=False, freeze=True, every_feat=False):
         super(InceptionV3, self).__init__()
