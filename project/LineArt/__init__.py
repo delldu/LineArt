@@ -50,9 +50,9 @@ def get_model():
     # torch::jit::setTensorExprFuserEnabled(false);
 
     model = torch.jit.script(model)
-    # todos.data.mkdir("output")
-    # if not os.path.exists("output/LineArt.torch"):
-    #     model.save("output/LineArt.torch")
+    todos.data.mkdir("output")
+    if not os.path.exists("output/LineArt.torch"):
+        model.save("output/LineArt.torch")
 
     return model, device
 

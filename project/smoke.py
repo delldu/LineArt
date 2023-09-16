@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # model = torch.jit.script(model)
     # print(model)
 
-    B, C, H, W = 1, 4, 1025, 1036
+    B, C, H, W = 1, 3, 512, 512
 
     with torch.profiler.profile(
         activities=[torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA]

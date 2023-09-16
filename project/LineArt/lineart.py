@@ -12,7 +12,7 @@ class ResidualBlock(nn.Module):
         conv_block = [nn.ReflectionPad2d(1),
                       nn.Conv2d(in_features, in_features, 3),
                       norm_layer(in_features),
-                      nn.ReLU(inplace=True),
+                      nn.ReLU(inplace=False),
                       nn.ReflectionPad2d(1),
                       nn.Conv2d(in_features, in_features, 3),
                       norm_layer(in_features)
@@ -32,7 +32,7 @@ class LineArt(nn.Module):
         model0 = [nn.ReflectionPad2d(3),
                   nn.Conv2d(input_nc, 64, 7),
                   norm_layer(64),
-                  nn.ReLU(inplace=True) ]
+                  nn.ReLU(inplace=False) ]
         self.model0 = nn.Sequential(*model0)
 
         # Downsampling
@@ -42,7 +42,7 @@ class LineArt(nn.Module):
         for _ in range(2):
             model1 += [nn.Conv2d(in_features, out_features, 3, stride=2, padding=1),
                        norm_layer(out_features),
-                       nn.ReLU(inplace=True) ]
+                       nn.ReLU(inplace=False) ]
             in_features = out_features
             out_features = in_features*2
         self.model1 = nn.Sequential(*model1)
@@ -59,7 +59,7 @@ class LineArt(nn.Module):
         for _ in range(2):
             model3 += [nn.ConvTranspose2d(in_features, out_features, 3, stride=2, padding=1, output_padding=1),
                        norm_layer(out_features),
-                       nn.ReLU(inplace=True) ]
+                       nn.ReLU(inplace=False) ]
             in_features = out_features
             out_features = in_features//2
         self.model3 = nn.Sequential(*model3)
